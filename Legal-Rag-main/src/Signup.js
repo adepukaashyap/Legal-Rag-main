@@ -158,7 +158,7 @@ function Signup() {
 
     try {
       const res = await axios.post(
-          "https://b191-34-50-184-66.ngrok-free.app/login",formData);
+          "https://b191-34-50-184-66.ngrok-free.app/signup",formData);
 
       if (res.data === "exist") {
         alert("User already exists");
