@@ -9,7 +9,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL = "https://thank-clerical-delighted.ngrok-free.dev/generate"
+  const API_URL = "https://thank-clerical-delighted.ngrok-free.dev/generate";
 
   const handleAsk = async () => {
     if (question.trim() === "") return;
