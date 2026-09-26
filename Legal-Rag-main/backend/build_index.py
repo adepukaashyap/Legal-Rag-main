@@ -8,83 +8,177 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
 
-BASE_DIR = os.path.dirname(__file__)
+# ============================================================
+# Base Directory
+# ============================================================
 
-CSV_PATH = os.path.join(BASE_DIR, "constitution.csv")
-INDEX_PATH = os.path.join(BASE_DIR, "constitution.index")
-DOCUMENTS_PATH = os.path.join(BASE_DIR, "documents.npy")
+BASE_DIR = os.path.dirname(
+    os.path.abspath(__file__)
+)
 
 
-# Load CSV
-df = pd.read_csv(CSV_PATH)
+# ============================================================
+# File Paths
+# ============================================================
+
+CSV_PATH = os.path.join(
+    BASE_DIR,
+    "constitution.csv"
+)
+
+INDEX_PATH = os.path.join(
+    BASE_DIR,
+    "constitution.index"
+)
+
+DOCUMENTS_PATH = os.path.join(
+    BASE_DIR,
+    "documents.npy"
+)
+
+
+# ============================================================
+# Load Constitution CSV
+# ============================================================
+
+df = pd.read_csv(
+    CSV_PATH
+)
 
 documents = []
 
+
+# ============================================================
+# Create Documents
+# ============================================================
+
 for _, row in df.iterrows():
+
+    article_id = str(
+        row["article_id"]
+    )
+
+    article_desc = str(
+        row["article_desc"]
+    )
+
+    # IMPORTANT:
+    # Include article_id inside the text that gets embedded.
+    # This improves retrieval for queries such as
+    # "What is Article 21?"
+    article_text = (
+        f"{article_id}\n"
+        f"{article_desc}"
+    )
+
     documents.append(
         Document(
-            page_content=str(row["article_desc"]),
+            page_content=article_text,
             metadata={
-                "article_id": str(row["article_id"])
+                "article_id": article_id
             }
         )
     )
 
 
-# Split documents
+# ============================================================
+# Text Chunking
+# ============================================================
+
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=512,
     chunk_overlap=128
 )
 
-documents = text_splitter.split_documents(documents)
+documents = text_splitter.split_documents(
+    documents
+)
 
-print("Documents:", len(documents))
+print(
+    "Documents:",
+    len(documents)
+)
 
 
-# Load the SAME embedding model
+# ============================================================
+# Load Embedding Model
+# ============================================================
+
 embedding_model = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
 
-# Create embeddings
-document_texts = [doc.page_content for doc in documents]
+# ============================================================
+# Generate Document Embeddings
+# ============================================================
 
-document_embeddings = embedding_model.embed_documents(
-    document_texts
+document_texts = [
+    doc.page_content
+    for doc in documents
+]
+
+document_embeddings = (
+    embedding_model.embed_documents(
+        document_texts
+    )
 )
+
+
+# ============================================================
+# Convert to NumPy
+# ============================================================
 
 embeddings_np = np.array(
     document_embeddings
-).astype("float32")
+).astype(
+    "float32"
+)
 
 
-# Normalize
-faiss.normalize_L2(embeddings_np)
+# ============================================================
+# Normalize Embeddings
+# ============================================================
+
+faiss.normalize_L2(
+    embeddings_np
+)
 
 
-# Create FAISS index
+# ============================================================
+# Create FAISS Index
+# ============================================================
+
 index = faiss.IndexFlatIP(
     embeddings_np.shape[1]
 )
 
-index.add(embeddings_np)
+index.add(
+    embeddings_np
+)
 
 
-# Save FAISS index
+# ============================================================
+# Save FAISS Index
+# ============================================================
+
 faiss.write_index(
     index,
     INDEX_PATH
 )
 
 
-# Save document texts + metadata
+# ============================================================
+# Save Documents
+# ============================================================
+
 document_data = np.array(
     [
         {
             "page_content": doc.page_content,
-            "article_id": doc.metadata["article_id"]
+            "article_id": doc.metadata[
+                "article_id"
+            ]
         }
         for doc in documents
     ],
@@ -98,6 +192,20 @@ np.save(
 )
 
 
-print("FAISS index saved successfully")
-print("Index:", INDEX_PATH)
-print("Documents:", DOCUMENTS_PATH)
+# ============================================================
+# Completion
+# ============================================================
+
+print(
+    "FAISS index saved successfully"
+)
+
+print(
+    "Index:",
+    INDEX_PATH
+)
+
+print(
+    "Documents:",
+    DOCUMENTS_PATH
+)

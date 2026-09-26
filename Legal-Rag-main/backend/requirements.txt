@@ -9,7 +9,8 @@ pandas
 langchain
 langchain-community
 langchain-huggingface
-sentence-transformers
 scikit-learn
 python-dotenv
 gunicorn
+sentence-transformers[onnx]
+onnxruntime
