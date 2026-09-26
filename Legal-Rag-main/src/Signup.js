@@ -158,7 +158,7 @@ function Signup() {
 
     try {
       const res = await axios.post(
-          "https://thank-clerical-delighted.ngrok-free.dev/signup",formData);
+          "http://13.210.176.140/signup",formData);
 
       if (res.status === 201 && res.data.message === "Signup successful") {
          history("/home", { state: { name: formData.fullName } });

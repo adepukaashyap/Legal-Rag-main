@@ -127,7 +127,7 @@ function Login() {
   async function submit(e) {
     e.preventDefault();
     try {
-      const res = await axios.post("https://thank-clerical-delighted.ngrok-free.dev/login", {
+      const res = await axios.post("http://13.210.176.140/login", {
         email,
         password,
       });
