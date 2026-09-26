@@ -160,10 +160,8 @@ function Signup() {
       const res = await axios.post(
           "https://thank-clerical-delighted.ngrok-free.dev/signup",formData);
 
-      if (res.data === "exist") {
-        alert("User already exists");
-      } else if (res.data === "notexist") {
-        history("/home", { state: { name: formData.fullName } });
+      if (res.status === 201 && res.data.message === "Signup successful") {
+         history("/home", { state: { name: formData.fullName } });
       }
     } catch (e) {
       alert("Error saving data. Please try again!");
