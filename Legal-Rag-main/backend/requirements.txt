@@ -1,0 +1,15 @@
+Flask
+flask-cors
+pymongo
+werkzeug
+groq
+faiss-cpu
+numpy
+pandas
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+scikit-learn
+python-dotenv
+gunicorn
