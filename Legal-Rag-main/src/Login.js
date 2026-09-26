@@ -132,11 +132,11 @@ function Login() {
         password,
       });
 
-      if (res.data === "exist") {
-        history("/home", { state: { id: email } });
+      if (res.status === 200 && res.data.message === "Login successful") {
+          history("/home", { state: { id: email } });
       } else {
-        alert("Invalid credentials");
-      }
+          alert("Invalid credentials");
+       }
     } catch (e) {
       alert("Login failed");
       console.log(e);
