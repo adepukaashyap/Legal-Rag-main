@@ -158,7 +158,7 @@ function Signup() {
 
     try {
       const res = await axios.post(
-          "http://13.210.176.140/signup",formData);
+          "https://legal-rag-main-production.up.railway.app/signup",formData);
 
       if (res.status === 201 && res.data.message === "Signup successful") {
          history("/home", { state: { name: formData.fullName } });
